@@ -1,7 +1,7 @@
 'use strict'
 
 import {openModal, closeModal} from './modal.js'
-import {readClients, createClient, deleteClient} from './clients.js'
+import {readClients, createClient, deleteClient, updateClient} from './clients.js'
 
 const createRow = ({nome, email, celular,cidade, id}) => {
     const row = document.createElement('tr')
@@ -29,6 +29,8 @@ const updateTable = async () => {
     clientsContainer.replaceChildren(...rows)
 }
 
+const isEdit = () => document.getElementById('nome').hasAttribute('data-id')
+
 const saveClient = async() => {
     // Criar um json com as informações do cliente
     const client = {
@@ -38,26 +40,36 @@ const saveClient = async() => {
         "celular": document.getElementById('celular').value,
         "cidade": document.getElementById('cidade').value
     }
-    // Enviar o json para o Servidor API
-    await createClient(client)
 
-    // Fechar a modal
+    if (isEdit()) {
+        client.id = document.getElementById('nome').dataset.id
+        await updateClient(client)
+    } else{
+        await createClient(client)
+    }
+
     closeModal()
 
-    // Atualizar a tabela
     updateTable()
+}
+
+const fillForm = (client) => {
+    document.getElementById('nome').value = client.nome
+    document.getElementById('email').value = client.email
+    document.getElementById('celular').value = client.celular
+    document.getElementById('cidade').value = client.cidade
+    document.getElementById('nome').dataset.id = client.id
 }
 
 globalThis.editClient = async (id) => {
     // Armazenar as informações do cliente selecionado em um variável
     const client = await readClients(id)
 
-    console.log (client)
-
     //  Preencher formulário com as informações
+    fillForm(client)
 
     // Abrir a modal no estado de edição
-
+    openModal()
 }
 
 globalThis.delClient = async(id) => {

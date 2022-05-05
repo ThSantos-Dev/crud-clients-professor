@@ -28,8 +28,22 @@ const deleteClient = async (codigo) => {
     console.log (response.ok)
 }
 
+const updateClient = async (client) => {
+    const options = {
+        'method': 'PUT',
+        'body': JSON.stringify(client),
+        headers: {
+            'content-type': 'application/json'
+        }
+    }
+
+    const response = await fetch (`${url}/${client.id}`, options)
+    console.log ('UPDATE', response.ok)
+}
+
 export{
     readClients,
     createClient,
-    deleteClient
+    deleteClient,
+    updateClient
 }
